@@ -48,17 +48,17 @@ exports.getTickets = async (req, res) => {
     let params = [];
 
     if (req.user.role_id === 3) {
-      // USER → only own tickets
+   
       query = "SELECT * FROM tickets WHERE created_by = ?";
       params = [req.user.id];
 
     } else if (req.user.role_id === 2) {
-      // SUPPORT → only assigned tickets
+   
       query = "SELECT * FROM tickets WHERE assigned_to = ?";
       params = [req.user.id];
 
     } else {
-      // MANAGER → all tickets
+   
       query = "SELECT * FROM tickets";
     }
 
@@ -135,13 +135,12 @@ exports.updateStatus = async (req, res) => {
       });
     }
 
-    // Update ticket status
+  
     await db.promise().query(
       "UPDATE tickets SET status = ? WHERE id = ?",
       [status, id]
     );
 
-    // Insert log
     await db.promise().query(
       `INSERT INTO status_logs 
        (ticket_id, old_status, new_status, changed_by)
