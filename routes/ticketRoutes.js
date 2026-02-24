@@ -5,26 +5,15 @@ const ticketController = require("../controllers/ticketController");
 const verifyToken = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/roleMiddleware");
 
-/* =========================================
-   CREATE TICKET
-   POST /tickets
-   Roles: USER (3), MANAGER (1)
-========================================= */
+
 router.post(
   "/",
   verifyToken,
-  checkRole(1, 3), // MANAGER + USER
+  checkRole(1, 3), 
   ticketController.createTicket
 );
 
 
-/* =========================================
-   GET TICKETS
-   GET /tickets
-   USER → own
-   SUPPORT → assigned
-   MANAGER → all
-========================================= */
 router.get(
   "/",
   verifyToken,
@@ -32,10 +21,6 @@ router.get(
 );
 
 
-/* =========================================
-   GET SINGLE TICKET
-   GET /tickets/:id
-========================================= */
 router.get(
   "/:id",
   verifyToken,
@@ -43,11 +28,6 @@ router.get(
 );
 
 
-/* =========================================
-   UPDATE STATUS
-   PATCH /tickets/:id/status
-   Roles: MANAGER (1), SUPPORT (2)
-========================================= */
 router.patch(
   "/:id/status",
   verifyToken,
