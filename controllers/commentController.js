@@ -40,10 +40,7 @@ exports.updateComment = async (req, res) => {
 };
 
 
-/* =========================================
-   DELETE COMMENT
-   Author OR MANAGER
-========================================= */
+
 exports.deleteComment = async (req, res) => {
   try {
     const { id } = req.params;
