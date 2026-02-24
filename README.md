@@ -18,6 +18,19 @@
    JWT_SECRET=your_secret
 4. Run: node server.js
 
+
+## Database Setup
+
+1. Create MySQL database.
+2. Import schema:
+
+mysql -u root -p < database.sql
+
+3. Update .env file with your DB credentials.
+4. Run: node server.js
+
+
+
 ## API Features
 - Role-based access control (MANAGER, SUPPORT, USER)
 - Ticket lifecycle enforcement
