@@ -1,0 +1,97 @@
+CREATE TABLE roles (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name ENUM('MANAGER','SUPPORT','USER') NOT NULL UNIQUE
+);
+
+INSERT IGNORE INTO roles (name) VALUES
+('MANAGER'),
+('SUPPORT'),
+('USER');
+
+
+CREATE TABLE users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_user_role
+  FOREIGN KEY (role_id)
+  REFERENCES roles(id)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE
+);
+
+
+CREATE TABLE tickets (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+
+  status ENUM('OPEN','IN_PROGRESS','RESOLVED','CLOSED') 
+    DEFAULT 'OPEN',
+
+  priority ENUM('LOW','MEDIUM','HIGH') 
+    DEFAULT 'MEDIUM',
+
+  created_by INT NOT NULL,
+  assigned_to INT NULL,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+    ON UPDATE CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_ticket_creator
+    FOREIGN KEY (created_by)
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT fk_ticket_assigned
+    FOREIGN KEY (assigned_to)
+    REFERENCES users(id)
+    ON DELETE SET NULL
+);
+
+
+
+CREATE TABLE comments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  ticket_id INT NOT NULL,
+  user_id INT NOT NULL,
+  comment TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_comment_ticket
+    FOREIGN KEY (ticket_id)
+    REFERENCES tickets(id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT fk_comment_user
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+);
+
+
+
+
+CREATE TABLE status_logs (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  ticket_id INT NOT NULL,
+  old_status ENUM('OPEN','IN_PROGRESS','RESOLVED','CLOSED') NOT NULL,
+  new_status ENUM('OPEN','IN_PROGRESS','RESOLVED','CLOSED') NOT NULL,
+  changed_by INT NOT NULL,
+  changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_status_ticket
+    FOREIGN KEY (ticket_id)
+    REFERENCES tickets(id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT fk_status_user
+    FOREIGN KEY (changed_by)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+);
